@@ -1,11 +1,9 @@
-
-
 from flask import Flask, jsonify, request
 import yfinance as yf
-import pandas as pd
-from sklearn.ensemble import RandomForestClassifier as RFC
-from sklearn.metrics import precision_score
+from sklearn.ensemble import RandomForestRegressor as RFR
 from sklearn.model_selection import GridSearchCV
+from sklearn.metrics import mean_absolute_error
+import pandas as pd
 import matplotlib.pyplot as plt
 from io import BytesIO
 import base64
@@ -16,42 +14,49 @@ app = Flask(__name__)
 def hello_world():
     return "<p>Hello, World!</p>"
 
+@app.route("/info/<string:ticker>", methods=["GET"])
+def get_info(ticker):
+    stock = yf.Ticker(ticker)
+    return jsonify(stock.info)
+
+@app.route("/news/<string:ticker>", methods=["GET"])
+def get_news(ticker):
+    stock = yf.Ticker(ticker)
+    return stock.news
+
 # Function to fetch company data
 def get_company_data(ticker):
-    """sp500 = pd.read_html('https://en.wikipedia.org/wiki/List_of_S%26P_500_companies')[0]
-    sp500['Symbol'] = sp500['Symbol'].str.replace('.', '-')
-    symbols_list = sp500['Symbol'].unique().tolist()
-    end_date = '2023-09-27'
-    start_date = pd.to_datetime(end_date) - pd.DateOffset(365*8)
-
-    df = yf.download(tickers=symbols_list, start=start_date, end=end_date).stack()
-    df.index.names = ['date', 'ticker']
-    return df[df.index.get_level_values('ticker') == ticker]"""
-
+    end_date = pd.to_datetime('today')
+    start_date = pd.to_datetime(end_date) - pd.DateOffset(years=4)  # 4 years of data
     try:
+        # Fetch the historical data for the given ticker
         company = yf.Ticker(ticker)
-        company_data = company.history(period = "max")
+        company_data = company.history("5y")
+
+        print(company_data)
         return company_data
+
     except Exception as e:
-        print("Error fetching data for company, please check again")
-        print(e)
+        print(f"Error fetching data for {ticker}. Please try again later.")
         return None
 
-# Function for stock price prediction
 def stock_price_prediction(ticker):
     currCompany = get_company_data(ticker)
-    if currCompany.empty:
-        return None, None
-
+    
     predictor_list = ["Close", "Volume", "Open", "High", "Low"]
+
+    # Create the target column for predicting the next day's 'Close' price
     currCompany["Tomorrow"] = currCompany["Close"].shift(-1)
-    currCompany["Target"] = (currCompany["Tomorrow"] > currCompany["Close"]).astype(int)
     currCompany = currCompany.loc["1995-01-01":].copy()
+
+    # Remove rows with NaN in the 'Tomorrow' column due to shifting
+    currCompany.dropna(subset=["Tomorrow"], inplace=True)
 
     # Split the data into training and testing sets
     training = currCompany.iloc[:-110]
     testing = currCompany.iloc[-110:]
 
+    # Define the parameter grid for the regressor
     param_grid = {
         'n_estimators': [100],
         'max_depth': [None, 10],
@@ -59,24 +64,47 @@ def stock_price_prediction(ticker):
         'min_samples_leaf': [1, 2]
     }
 
-    model = RFC(random_state=1)
-    grid_search = GridSearchCV(model, param_grid, cv=5, scoring='precision')
-    grid_search.fit(training[predictor_list], training["Target"])
+    # Initialize the RandomForestRegressor model for regression
+    model = RFR(random_state=1)
+    
+    # Use GridSearchCV to find the best parameters, optimizing for regression metrics
+    grid_search = GridSearchCV(model, param_grid, cv=5, scoring='neg_mean_absolute_error')
+    grid_search.fit(training[predictor_list], training["Tomorrow"])
 
+    # Get the best model from the grid search
     best_model = grid_search.best_estimator_
-    preds = best_model.predict(testing[predictor_list])
-    precision = precision_score(testing["Target"], preds)
 
-    label_mapping = {0: "Sell", 1: "Buy"}
-    actual_labels = [label_mapping[val] for val in testing["Target"]]
-    predicted_labels = [label_mapping[val] for val in preds]
+    # Make predictions on the testing set
+    predictions = best_model.predict(testing[predictor_list])
 
-    predictions = pd.DataFrame({
-        "Date": testing.index.date,
-        "Actual": actual_labels,
-        "Predicted": predicted_labels
-    })
-    return predictions, precision
+    # Calculate mean absolute error for the predictions
+    mae = mean_absolute_error(testing["Tomorrow"], predictions)
+
+    # Shift the last date for the next prediction
+    timestamp = testing.index[-1] + pd.DateOffset(days=1)
+
+    # Convert to a regular date and then to string
+    date_only_str = timestamp.date().strftime('%Y-%m-%d')
+
+    # Return the last predicted price as a dictionary
+    predc = {
+        "Date": date_only_str, 
+        "Predicted Price": predictions[-1]
+    }
+
+    return jsonify(predc)
+
+
+# Flask API route for stock price prediction
+@app.route("/predict/<string:ticker>", methods=["GET"])
+def predict_stock_price(ticker):
+    try:
+        predictions = stock_price_prediction(ticker)
+        if predictions is None:
+            return jsonify({"error": "Prediction failed or no data available"}), 404
+        return predictions
+    except Exception as e:
+        return jsonify({"error predict_stock_prediction": str(e)}), 500
 
 # Function to plot historical data
 def plot_historical_data(ticker):
@@ -101,39 +129,14 @@ def plot_historical_data(ticker):
     image_base64 = base64.b64encode(buf.read()).decode('utf-8')
     return image_base64
 
-# Flask API route to get company stock data
-@app.route("/data/<string:ticker>", methods=["GET"])
-def get_company_stock_data(ticker):
-    try:
-        data = get_company_data(ticker)
-        if data is None or data.empty:
-            return jsonify({"error": "Company not found or no data available"}), 404
-        return jsonify(data.reset_index().to_dict(orient='records'))
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-# Flask API route for stock price prediction
-@app.route("/predict/<string:ticker>", methods=["GET"])
-def predict_stock_price(ticker):
-    try:
-        predictions, precision = stock_price_prediction(ticker)
-        if predictions is None or predictions.empty:
-            return jsonify({"error": "Prediction failed or no data available"}), 404
-        return jsonify({
-            "predictions": predictions.to_dict(orient='records'),
-            "precision": precision
-        })
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
 # Flask API route to plot historical stock data
-@app.route("/plot/<string:ticker>", methods=["GET"])
+"""@app.route("/plot/<string:ticker>", methods=["GET"])
 def plot_stock_data(ticker):
     try:
         image_base64 = plot_historical_data(ticker)
         return jsonify({"plot": image_base64})
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": str(e)}), 500"""
 
 if __name__ == "__main__":
     app.run(debug=True)

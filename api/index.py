@@ -4,9 +4,6 @@ from sklearn.ensemble import RandomForestRegressor as RFR
 from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import mean_absolute_error
 import pandas as pd
-import matplotlib.pyplot as plt
-from io import BytesIO
-import base64
 
 app = Flask(__name__)
 
@@ -106,37 +103,7 @@ def predict_stock_price(ticker):
     except Exception as e:
         return jsonify({"error predict_stock_prediction": str(e)}), 500
 
-# Function to plot historical data
-def plot_historical_data(ticker):
-    company = yf.Ticker(ticker)
-    end_date = pd.Timestamp.now()
-    start_date = end_date - pd.DateOffset(years=1)
-    company_data = company.history(start=start_date, end=end_date)
-
-    plt.figure(figsize=(12, 6))
-    plt.plot(company_data.index, company_data['Close'], label=f'{ticker} Close Price', color='b')
-    plt.title(f'Historical Close Prices for {ticker} (Last 1 Year)')
-    plt.xlabel('Date')
-    plt.ylabel('Close Price')
-    plt.legend()
-    plt.grid()
-
-    # Save plot to a byte stream
-    buf = BytesIO()
-    plt.savefig(buf, format="png")
-    plt.close()
-    buf.seek(0)
-    image_base64 = base64.b64encode(buf.read()).decode('utf-8')
-    return image_base64
-
 # Flask API route to plot historical stock data
-"""@app.route("/plot/<string:ticker>", methods=["GET"])
-def plot_stock_data(ticker):
-    try:
-        image_base64 = plot_historical_data(ticker)
-        return jsonify({"plot": image_base64})
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500"""
 
 if __name__ == "__main__":
     app.run(debug=True)

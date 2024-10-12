@@ -3,4 +3,3 @@ yfinance
 flask
 scikit-learn
 pandas
-matplotlib

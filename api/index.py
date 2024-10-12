@@ -14,12 +14,12 @@ app = Flask(__name__)
 def hello_world():
     return "<p>Hello, World!</p>"
 
-@app.route("/info/<string:ticker>", methods=["GET"])
+@app.route("/api/info/<string:ticker>", methods=["GET"])
 def get_info(ticker):
     stock = yf.Ticker(ticker)
     return jsonify(stock.info)
 
-@app.route("/news/<string:ticker>", methods=["GET"])
+@app.route("/api/news/<string:ticker>", methods=["GET"])
 def get_news(ticker):
     stock = yf.Ticker(ticker)
     return stock.news
@@ -96,7 +96,7 @@ def stock_price_prediction(ticker):
 
 
 # Flask API route for stock price prediction
-@app.route("/predict/<string:ticker>", methods=["GET"])
+@app.route("/api/predict/<string:ticker>", methods=["GET"])
 def predict_stock_price(ticker):
     try:
         predictions = stock_price_prediction(ticker)

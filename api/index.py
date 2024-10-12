@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request
+import yfinance as yf
 
 app = Flask(__name__)
 

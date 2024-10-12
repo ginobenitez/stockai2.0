@@ -3,6 +3,6 @@ yfinance
 flask
 scikit-learn
 pandas
-matplotlib.pyplot
+matplotlib
 io
 base64

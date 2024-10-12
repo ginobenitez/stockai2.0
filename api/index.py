@@ -19,6 +19,7 @@ def get_news(ticker):
 
 # Function to fetch company data
 def get_company_data(ticker):
+    import pandas as pd
     end_date = pd.to_datetime('today')
     start_date = pd.to_datetime(end_date) - pd.DateOffset(years=4)  # 4 years of data
     try:
@@ -34,9 +35,9 @@ def get_company_data(ticker):
         return None
 
 def stock_price_prediction(ticker):
-    import yfinance as yf
     from sklearn.ensemble import RandomForestRegressor as RFR
     from sklearn.metrics import mean_absolute_error
+    from sklearn.model_selection import GridSearchCV
     import pandas as pd
     currCompany = get_company_data(ticker)
     

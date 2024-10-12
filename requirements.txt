@@ -1,2 +1,10 @@
 Flask==3.0.3
 yfinance
+flask
+sklearn.ensemble
+sklearn.model_selection
+sklearn.metrics
+pandas
+matplotlib.pyplot
+io
+base64

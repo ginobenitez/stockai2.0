@@ -1,5 +1,8 @@
 from flask import Flask, jsonify, request
 import yfinance as yf
+from xgboost import XGBRegressor  # Use XGBoost instead of RandomForestRegressor
+#from sklearn.metrics import mean_absolute_error
+import pandas as pd
 
 app = Flask(__name__)
 
@@ -35,12 +38,11 @@ def get_company_data(ticker):
         return None
 
 def stock_price_prediction(ticker):
-    from sklearn.ensemble import RandomForestRegressor as RFR
-    from sklearn.metrics import mean_absolute_error
-    from sklearn.model_selection import GridSearchCV
-    import pandas as pd
     currCompany = get_company_data(ticker)
     
+    if currCompany is None or currCompany.empty:
+        return None
+
     predictor_list = ["Close", "Volume", "Open", "High", "Low"]
 
     # Create the target column for predicting the next day's 'Close' price
@@ -54,40 +56,33 @@ def stock_price_prediction(ticker):
     training = currCompany.iloc[:-110]
     testing = currCompany.iloc[-110:]
 
-    # Define the parameter grid for the regressor
-    param_grid = {
-        'n_estimators': [100],
-        'max_depth': [None, 10],
-        'min_samples_split': [2, 5],
-        'min_samples_leaf': [1, 2]
-    }
+    # Initialize the XGBoost model
+    model = XGBRegressor(objective='reg:squarederror', n_estimators=100, max_depth=5, learning_rate=0.1)
 
-    # Initialize the RandomForestRegressor model for regression
-    model = RFR(random_state=1)
-    
-    # Use GridSearchCV to find the best parameters, optimizing for regression metrics
-    grid_search = GridSearchCV(model, param_grid, cv=5, scoring='neg_mean_absolute_error')
-    grid_search.fit(training[predictor_list], training["Tomorrow"])
-
-    # Get the best model from the grid search
-    best_model = grid_search.best_estimator_
+    # Fit the model
+    model.fit(training[predictor_list], training["Tomorrow"])
 
     # Make predictions on the testing set
-    predictions = best_model.predict(testing[predictor_list])
+    predictions = model.predict(testing[predictor_list])
 
     # Calculate mean absolute error for the predictions
-    mae = mean_absolute_error(testing["Tomorrow"], predictions)
+    #mae = mean_absolute_error(testing["Tomorrow"], predictions)
+
+    # Create a DataFrame to show actual vs predicted prices
+    prediction_results = pd.DataFrame({
+        "Date": testing.index.date,
+        "Actual Price": testing["Tomorrow"],
+        "Predicted Price": predictions
+    })
 
     # Shift the last date for the next prediction
     timestamp = testing.index[-1] + pd.DateOffset(days=1)
-
-    # Convert to a regular date and then to string
     date_only_str = timestamp.date().strftime('%Y-%m-%d')
 
     # Return the last predicted price as a dictionary
     predc = {
         "Date": date_only_str, 
-        "Predicted Price": predictions[-1]
+        "Predicted Price": round(float(predictions[-1]))
     }
 
     return jsonify(predc)

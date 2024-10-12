@@ -4,5 +4,3 @@ flask
 scikit-learn
 pandas
 matplotlib
-io
-base64

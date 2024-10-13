@@ -157,7 +157,6 @@ netifaces==0.11.0
 networkx==3.3
 notebook==7.2.0
 notebook_shim==0.2.4
-numpy>=2.0.0,<2.1.0
 openai==1.51.2
 openstacksdk==4.0.0
 opt_einsum==3.4.0

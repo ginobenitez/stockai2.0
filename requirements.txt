@@ -1,5 +1,9 @@
 Flask==3.0.3
-yfinance
 threadpoolctl
-gunicorn
+Flask
+yfinance
+xgboost
+pandas
 numpy
+scikit-learn
+gunicorn

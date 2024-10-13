@@ -88,7 +88,7 @@ def predict_stock_price(ticker):
 
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT"))
+    port = int(os.environ.get("PORT", 8080))
     host = os.environ.get("HOST")
     # Bind to all available interfaces using "0.0.0.0"
     app.run(host="0.0.0.0", port=port)  # Remove the ssl_context argument

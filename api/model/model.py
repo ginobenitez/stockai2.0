@@ -1,25 +1,12 @@
-import os
+
 from flask import Flask, jsonify, request
 import yfinance as yf
+import os
 from xgboost import XGBRegressor  # Use XGBoost instead of RandomForestRegressor
 #from sklearn.metrics import mean_absolute_error
 import pandas as pd
 
 app = Flask(__name__)
-
-@app.route("/api/python")
-def hello_world():
-    return "<p>Hello, World!</p>"
-
-@app.route("/api/info/<string:ticker>", methods=["GET"])
-def get_info(ticker):
-    stock = yf.Ticker(ticker)
-    return jsonify(stock.info)
-
-@app.route("/api/news/<string:ticker>", methods=["GET"])
-def get_news(ticker):
-    stock = yf.Ticker(ticker)
-    return stock.news
 
 # Function to fetch company data
 def get_company_data(ticker):
@@ -86,7 +73,6 @@ def stock_price_prediction(ticker):
 
     return jsonify(predc)
 
-
 # Flask API route for stock price prediction
 @app.route("/api/predict/<string:ticker>", methods=["GET"])
 def predict_stock_price(ticker):
@@ -100,6 +86,10 @@ def predict_stock_price(ticker):
 
 # Flask API route to plot historical stock data
 
+
 if __name__ == "__main__":
-    port = int(os.environ.get('PORT', "8080"))
-    app.run(host="0.0.0.0", port=port)
+    port = int(os.environ.get("PORT"))
+    host = os.environ.get("HOST")
+    # Bind to all available interfaces using "0.0.0.0"
+    app.run(host="0.0.0.0", port=port)  # Remove the ssl_context argument
+

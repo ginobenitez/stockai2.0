@@ -134,7 +134,7 @@ export function Dashboard() {
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
                 type="search"
-                placeholder="Search products..."
+                placeholder="Search Stocks..."
                 className="pl-8 sm:w-[300px] md:w-[200px] lg:w-[300px]"
               />
             </div>
@@ -158,7 +158,7 @@ export function Dashboard() {
         </div>
       </header>
       <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
-        <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
+        {/* <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
           <Card x-chunk="dashboard-01-chunk-0">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
@@ -210,12 +210,10 @@ export function Dashboard() {
                 +201 since last hour
               </p>
             </CardContent>
-          </Card>
-        </div>
-        <div className="grid gap-4 md:gap-8 lg:grid-cols-2 xl:grid-cols-3">
-          <Card
-            className="xl:col-span-2" x-chunk="dashboard-01-chunk-4"
-          >
+          </Card> 
+        </div>*/}
+        <div className="grid gap-4 md:gap-8 lg:grid-cols-2 xl:grid-cols-2">
+          <Card className="xl:col-span-1 " x-chunk="dashboard-01-chunk-4">
             <CardHeader className="flex flex-row items-center">
               <div className="grid gap-2">
                 <CardTitle>Watching</CardTitle>
@@ -234,7 +232,7 @@ export function Dashboard() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Customer</TableHead>
+                    <TableHead>STOCKS</TableHead>
                     <TableHead className="hidden xl:table-column">
                       Type
                     </TableHead>
@@ -244,13 +242,13 @@ export function Dashboard() {
                     <TableHead className="hidden xl:table-column">
                       Date
                     </TableHead>
-                    <TableHead className="text-right">Amount</TableHead>
+                    <TableHead className="text-right">TREND</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   <TableRow>
                     <TableCell>
-                      <div className="font-medium">NVIDIA</div>
+                      <div className="font-medium">NVDA</div>
                     </TableCell>
                     <TableCell className="hidden xl:table-column">
                       Sale
@@ -267,13 +265,11 @@ export function Dashboard() {
                   </TableRow>
                   <TableRow>
                     <TableCell>
-                      <div className="font-medium">Olivia Smith</div>
-                      <div className="hidden text-sm text-muted-foreground md:inline">
-                        olivia@example.com
-                      </div>
+                      <div className="font-medium">AAPL</div>
+                      
                     </TableCell>
                     <TableCell className="hidden xl:table-column">
-                      Refund
+                      Subscription
                     </TableCell>
                     <TableCell className="hidden xl:table-column">
                       <Badge className="text-xs" variant="outline">
@@ -283,14 +279,12 @@ export function Dashboard() {
                     <TableCell className="hidden md:table-cell lg:hidden xl:table-column">
                       2023-06-24
                     </TableCell>
-                    <TableCell className="text-right">$150.00</TableCell>
+                    <TableCell className="text-right">SHOW GRAPH HERE</TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell>
-                      <div className="font-medium">Noah Williams</div>
-                      <div className="hidden text-sm text-muted-foreground md:inline">
-                        noah@example.com
-                      </div>
+                      <div className="font-medium">GME</div>
+        
                     </TableCell>
                     <TableCell className="hidden xl:table-column">
                       Subscription
@@ -303,14 +297,11 @@ export function Dashboard() {
                     <TableCell className="hidden md:table-cell lg:hidden xl:table-column">
                       2023-06-25
                     </TableCell>
-                    <TableCell className="text-right">$350.00</TableCell>
+                    <TableCell className="text-right">SHOW GRAPH HERE</TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell>
-                      <div className="font-medium">Emma Brown</div>
-                      <div className="hidden text-sm text-muted-foreground md:inline">
-                        emma@example.com
-                      </div>
+                      <div className="font-medium">AMZN</div>
                     </TableCell>
                     <TableCell className="hidden xl:table-column">
                       Sale
@@ -323,14 +314,12 @@ export function Dashboard() {
                     <TableCell className="hidden md:table-cell lg:hidden xl:table-column">
                       2023-06-26
                     </TableCell>
-                    <TableCell className="text-right">$450.00</TableCell>
+                    <TableCell className="text-right">SHOW GRAPH HERE</TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell>
-                      <div className="font-medium">Liam Johnson</div>
-                      <div className="hidden text-sm text-muted-foreground md:inline">
-                        liam@example.com
-                      </div>
+                      <div className="font-medium">GOOGL</div>
+                      
                     </TableCell>
                     <TableCell className="hidden xl:table-column">
                       Sale
@@ -343,7 +332,7 @@ export function Dashboard() {
                     <TableCell className="hidden md:table-cell lg:hidden xl:table-column">
                       2023-06-27
                     </TableCell>
-                    <TableCell className="text-right">$550.00</TableCell>
+                    <TableCell className="text-right">SHOW GRAPH HERE</TableCell>
                   </TableRow>
                 </TableBody>
               </Table>
@@ -351,7 +340,7 @@ export function Dashboard() {
           </Card>
           <Card x-chunk="dashboard-01-chunk-5">
             <CardHeader>
-              <CardTitle>Recent Sales</CardTitle>
+              <CardTitle>HOT STOCKS</CardTitle>
             </CardHeader>
             <CardContent className="grid gap-8">
               <div className="flex items-center gap-4">
@@ -361,13 +350,11 @@ export function Dashboard() {
                 </Avatar>
                 <div className="grid gap-1">
                   <p className="text-sm font-medium leading-none">
-                    Olivia Martin
+                    S&P 500
                   </p>
-                  <p className="text-sm text-muted-foreground">
-                    olivia.martin@email.com
-                  </p>
+                  
                 </div>
-                <div className="ml-auto font-medium">+$1,999.00</div>
+                <div className="ml-auto font-medium">SHOW GRAPH HERE</div>
               </div>
               <div className="flex items-center gap-4">
                 <Avatar className="hidden h-9 w-9 sm:flex">
@@ -376,13 +363,10 @@ export function Dashboard() {
                 </Avatar>
                 <div className="grid gap-1">
                   <p className="text-sm font-medium leading-none">
-                    Jackson Lee
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    jackson.lee@email.com
+                    Nasdaq
                   </p>
                 </div>
-                <div className="ml-auto font-medium">+$39.00</div>
+                <div className="ml-auto font-medium">SHOW GRAPH HERE</div>
               </div>
               <div className="flex items-center gap-4">
                 <Avatar className="hidden h-9 w-9 sm:flex">
@@ -391,13 +375,10 @@ export function Dashboard() {
                 </Avatar>
                 <div className="grid gap-1">
                   <p className="text-sm font-medium leading-none">
-                    Isabella Nguyen
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    isabella.nguyen@email.com
+                    Bitcoin
                   </p>
                 </div>
-                <div className="ml-auto font-medium">+$299.00</div>
+                <div className="ml-auto font-medium">SHOW GRAPH HERE</div>
               </div>
               <div className="flex items-center gap-4">
                 <Avatar className="hidden h-9 w-9 sm:flex">
@@ -406,13 +387,10 @@ export function Dashboard() {
                 </Avatar>
                 <div className="grid gap-1">
                   <p className="text-sm font-medium leading-none">
-                    William Kim
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    will@email.com
+                    TSLA
                   </p>
                 </div>
-                <div className="ml-auto font-medium">+$99.00</div>
+                <div className="ml-auto font-medium">SHOW GRAPH HERE</div>
               </div>
               <div className="flex items-center gap-4">
                 <Avatar className="hidden h-9 w-9 sm:flex">
@@ -421,13 +399,10 @@ export function Dashboard() {
                 </Avatar>
                 <div className="grid gap-1">
                   <p className="text-sm font-medium leading-none">
-                    Sofia Davis
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    sofia.davis@email.com
+                    MSFT
                   </p>
                 </div>
-                <div className="ml-auto font-medium">+$39.00</div>
+                <div className="ml-auto font-medium">SHOW GRAPH HERE</div>
               </div>
             </CardContent>
           </Card>

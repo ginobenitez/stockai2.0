@@ -11,10 +11,10 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
-export const description =
+/*export const description =
   "A login form with email and password. There's an option to login with Google and a link to sign up if you don't have an account."
-
-export function Dashboard() {
+*/
+function Dashboard() {
   return (
     <div className="flex items-center justify-center h-screen">
         <Card className="mx-auto max-w-lg p-8">

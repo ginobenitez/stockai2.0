@@ -1,9 +1,6 @@
 import os
 from flask import Flask, jsonify, request
 import yfinance as yf
-from xgboost import XGBRegressor  # Use XGBoost instead of RandomForestRegressor
-#from sklearn.metrics import mean_absolute_error
-import pandas as pd
 
 app = Flask(__name__)
 
